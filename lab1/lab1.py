@@ -49,6 +49,30 @@ def breadth_first_search(stack):
     flip_sequence = []
 
     # --- v ADD YOUR CODE HERE v --- #
+    if stack.check_ordered():
+        return flip_sequence
+    
+    # initialize the queue with the initial stack and an empty sequence (a node in the search tree)
+    # FIFO structure
+    queue = deque([(stack, [])])
+    visited = set()
+    visited.add((tuple(stack.order), tuple(stack.orientations)))
+    
+    while queue:
+        current_stack, current_sequence = queue.popleft()
+        for flip_position in range(1, stack.num_books + 1):
+            new_stack = current_stack.copy()
+            new_stack.flip_stack(flip_position)
+            new_sequence = current_sequence + [flip_position]
+            
+            if new_stack.check_ordered():
+                return new_sequence
+            
+            state_key = (tuple(new_stack.order), tuple(new_stack.orientations))
+            if state_key not in visited:
+                visited.add(state_key)
+                queue.append((new_stack, new_sequence))
+    
 
     return flip_sequence
     # ---------------------------- #
@@ -56,9 +80,40 @@ def breadth_first_search(stack):
 
 def depth_first_search(stack):
     flip_sequence = []
-
+   
     # --- v ADD YOUR CODE HERE v --- #
-
-
+    if stack.check_ordered():
+        return flip_sequence
+    # initialize the stack with the initial stack and an empty sequence (a node in the search tree)
+    # LIFO structure
+    stack_dfs = [(stack, [])]
+    visited = set()
+    visited.add((tuple(stack.order), tuple(stack.orientations)))
+    while stack_dfs:
+        current_stack, current_sequence = stack_dfs.pop()
+        # iterate through possible flip positions in reverse order to maintain correct DFS order
+        for filp_position in range(stack.num_books, 0,
+   -1):
+            new_stack = current_stack.copy()
+            new_stack.flip_stack(filp_position)
+            
+            if new_stack.check_ordered():
+                return current_sequence + [filp_position]
+            
+            state_key = (tuple(new_stack.order), tuple(new_stack.orientations))
+            if state_key not in visited:
+                visited.add(state_key)
+                stack_dfs.append((new_stack, current_sequence + [filp_position]))
+        
+        
     return flip_sequence
     # ---------------------------- #
+    
+
+test = TextbookStack(initial_order=[3, 2, 1, 0], initial_orientations=[0, 0, 0, 0])
+output_sequence = breadth_first_search(test)
+print(output_sequence) # Should give you [4]
+
+new_stack = apply_sequence(test, output_sequence)
+stack_ordered = new_stack.check_ordered()
+print(stack_ordered) # Should give you True
