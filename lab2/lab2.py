@@ -76,11 +76,11 @@ def heauritic(stack):
             satify = True
         
         # condition 3: wrong order but both face up
-        if orient1 == 1 and orient2 == 1 and book1 == book2 + 1:
+        if orient1 == 1 and orient2 == 1 and book1 > book2:
             satify = True
 
         # condition 4: correct order but both face down 
-        if orient1 == 0 and orient2 == 0 and book1 + 1 == book2:
+        if orient1 == 0 and orient2 == 0 and book1 < book2:
             satify = True
 
         if satify:
